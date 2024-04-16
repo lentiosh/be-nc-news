@@ -11,8 +11,8 @@ function getTopics (req, res, next) {
 }
 
 function getAllAPI(req, res, next) {
-    
     res.status(200).send({ endpoints });
 }
+
 
 module.exports = { getTopics, getAllAPI };
