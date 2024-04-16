@@ -7,4 +7,15 @@ function fetchArticle(article_id) {
         });
 }
 
-module.exports = { fetchArticle }
+function fetchAllArticles(sort_by = "created_at", order = "desc") {
+  const validSortByList = [ "created_at" ];
+  const validOrderList = ["asc", "desc" ];
+
+  let sqlQuery = `SELECT title, topic, author, body, created_at, votes, article_img_url comments.shop_name 
+                      FROM articles 
+                      LEFT JOIN comments
+                      ON  =  `;
+
+}
+
+module.exports = { fetchArticle, fetchAllArticles }

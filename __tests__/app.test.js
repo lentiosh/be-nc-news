@@ -62,6 +62,8 @@ describe('/api/articles/:article_id', () => {
     });
   })
 
+  
+
   test('GET 404: article not found for non-existing article_id', () => {
     return request(app)
         .get('/api/articles/123456')
@@ -71,6 +73,18 @@ describe('/api/articles/:article_id', () => {
             expect( msg ).toBe('we dont find yor article');
         });
 });
+})
+
+describe('/api/articles', () => {
+  test('GET 200: Responds with all articles', () => {
+  return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body }) => {
+      const { article } = body;
+
+    });
+  });
 })
 
 describe("NOT RECOGNISED", () => {
