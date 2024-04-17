@@ -18,11 +18,16 @@ function getArticle(req, res, next) {
   }
 
   function getAllArticles(req, res, next) {
-    const { } = req.query;
-    fetchAllArticles(sort_by, order)
+
+    fetchAllArticles()
     .then(articles => {
-        
+        console.log(articles)
+        res.status(200).send({ articles : articles })
     })
+    .catch((err) => { 
+        console.log(err)
+        next(err);
+      })
   }
 
 module.exports = { getArticle, getAllArticles }

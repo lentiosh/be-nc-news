@@ -4,6 +4,7 @@ const app = require('../app')
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const endpoints = require('../endpoints.json')
+const { convertTimestampToDate } = require('../db/seeds/utils')
 
 afterAll(() => {
     db.end();
@@ -49,7 +50,6 @@ describe('/api/articles/:article_id', () => {
     .expect(200)
     .then(({ body }) => {
       const { article } = body;
-      console.log(article)
       expect(article).toMatchObject({
         title: "Living in the shadow of a great man",
         topic: "mitch",
@@ -76,12 +76,26 @@ describe('/api/articles/:article_id', () => {
 })
 
 describe('/api/articles', () => {
-  test('GET 200: Responds with all articles', () => {
+  test('GET 200: Responds with an articles array of article objects', () => {
   return request(app)
     .get("/api/articles")
     .expect(200)
     .then(({ body }) => {
-      const { article } = body;
+      const { articles } = body;
+      expect(articles.length).toBe(13)
+      articles.forEach((article) => {
+        expect(article).toMatchObject({
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          comment_count: expect.any(String),
+          article_img_url: expect.any(String)
+      });
+      expect(article.body).toBe(undefined)
+      })
+      expect(Array.isArray(articles)).toBe(true);
 
     });
   });
