@@ -4,7 +4,6 @@ const app = require('../app')
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const endpoints = require('../endpoints.json')
-const { convertTimestampToDate } = require('../db/seeds/utils')
 
 afterAll(() => {
     db.end();
@@ -99,6 +98,33 @@ describe('/api/articles', () => {
 
     });
   });
+})
+
+describe('/api/articles/1/comments', () => {
+  test('GET 200: Respons with an array of comments associated with the article_id', () => {
+    return request(app)
+    .get('/api/articles/1/comments')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments).toHaveLength(11)
+    })
+  })
+  test('GET 200: Respons with an empty array when comments has not articles', () => {
+    return request(app)
+    .get('/api/articles/4/comments')
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments).toHaveLength(0)
+    })
+  })
+  test('GET 404: Responds with an error when article_id is valid but non-existent', () => {
+    return request(app)
+    .get('/api/articles/12345/comments')
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('article_id not found')
+    })
+  })
 })
 
 describe("NOT RECOGNISED", () => {
