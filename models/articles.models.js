@@ -1,4 +1,4 @@
-const db = require('../db/connection')
+const db = require('../db/connection');
 
 function fetchArticle(article_id) {
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
@@ -18,11 +18,28 @@ function fetchAllArticles() {
   return db.query(sqlQuery).then(({rows}) => {
 
     if (!rows.length) return Promise.reject({ status: 404, msg: "not found" });
-    console.log(rows)
 
     return rows;
 
   })
 }
 
-module.exports = { fetchArticle, fetchAllArticles }
+function fetchAllCommentsByArticle(article_id) {
+    return db.query(`SELECT comment_id, votes, created_at, author, body, article_id FROM comments
+    WHERE article_id=$1
+    ORDER BY created_at DESC;`, [article_id])
+    .then(({ rows: comments }) => {
+        
+        return comments;
+    });
+}
+function checkArticleExists(article_id){
+    return db.query(`SELECT * FROM articles WHERE article_id=$1`, [article_id])
+    .then(({ rows: articles }) => {
+        if(articles.length === 0) {
+            return Promise.reject({ status: 404, msg: "article_id not found" })
+        }
+    })
+}
+
+module.exports = { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists }

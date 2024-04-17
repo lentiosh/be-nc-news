@@ -1,4 +1,4 @@
-const { fetchArticle, fetchAllArticles } = require('../models/articles.models')
+const { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists } = require('../models/articles.models')
 
 function getArticle(req, res, next) {
     const { article_id } = req.params;
@@ -18,16 +18,26 @@ function getArticle(req, res, next) {
   }
 
   function getAllArticles(req, res, next) {
-
     fetchAllArticles()
     .then(articles => {
-        console.log(articles)
         res.status(200).send({ articles : articles })
     })
     .catch((err) => { 
-        console.log(err)
         next(err);
       })
   }
 
-module.exports = { getArticle, getAllArticles }
+  function getAllCommentsByArticle(req, res, next){
+    const { article_id } = req.params;
+
+    Promise.all([fetchAllCommentsByArticle(article_id), checkArticleExists(article_id) ])
+
+    .then(([comments]) => {
+        res.status(200).send({ comments })
+    })
+    .catch((err) => { 
+        next(err);
+      })
+  }
+
+module.exports = { getArticle, getAllArticles, getAllCommentsByArticle }
