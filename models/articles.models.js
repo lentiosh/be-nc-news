@@ -43,6 +43,11 @@ function checkArticleExists(article_id){
 }
 
 function insertComment(article_id, username, body) {
+
+    if (!body) {
+        return Promise.reject({ status: 400, msg: "body not find" })
+    }
+
     return db
       .query(
         `INSERT INTO comments
@@ -55,11 +60,15 @@ function insertComment(article_id, username, body) {
       });
     }
 
-    function updateArticle(treasure_id, cost_at_auction) {
-        return db.query(`UPDATE treasures SET cost_at_auction=$1 WHERE treasure_id=$2 RETURNING *`, 
-      [cost_at_auction, treasure_id]).then(({rows}) => {
-        return rows[0]
-      })
-      }
+function updateArticle(article_id, inc_votes) {
+        return db.query(`UPDATE articles
+                        SET votes = votes + $1
+                        WHERE article_id = $2
+                        RETURNING *;`, 
+                        [inc_votes, article_id])
+                        .then(({rows}) => {
+                           return rows[0] 
+                        })
+        }
 
 module.exports = { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists, insertComment, updateArticle }

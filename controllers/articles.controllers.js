@@ -1,4 +1,4 @@
-const { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists, insertComment } = require('../models/articles.models')
+const { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists, insertComment, updateArticle } = require('../models/articles.models')
 
 function getArticle(req, res, next) {
     const { article_id } = req.params;
@@ -44,10 +44,6 @@ function getArticle(req, res, next) {
     const { article_id } = req.params;
     const { username, body } = req.body;
 
-    if (!body) {
-        return res.status(400).send({ msg: 'body not find' });
-    }
-
     insertComment(article_id, username, body)
     .then((comment) => {
         res.status(201).send({ comment });
@@ -58,11 +54,16 @@ function getArticle(req, res, next) {
   }
 
   function patchArticle(req, res, next) {
+
     const { article_id } = req.params;
-    const { cost_at_auction } = req.body;
-    return updateTreasure( article_id, cost_at_auction)
-    .then((treasure) => {
-      res.status(200).send({ treasure });
+    const { inc_votes } = req.body;
+
+    updateArticle( article_id, inc_votes )
+    .then((article) => {
+        if(!article) {
+            return res.status(404).send({ msg : 'article not found' })
+        }
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);

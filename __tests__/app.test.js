@@ -135,7 +135,6 @@ describe('POST /api/articles/:article_id/comments', () => {
           .expect(201)
           .then(({ body }) => {
             const { comment } = body;
-            console.log(comment)
               expect(comment).toMatchObject({
                   author: 'butter_bridge',
                   body: 'add a new comment',
@@ -152,7 +151,29 @@ describe('POST /api/articles/:article_id/comments', () => {
           expect(body.msg).toBe('body not find')
         })
 });
+});
 
+describe('PATCH /api/articles/:article_id', () => {
+  test('200: Updates votes and returns updated article', () => {
+      return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 100 })
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body.article)
+              expect(body.article).toHaveProperty('votes');
+              expect(body.article.votes).toBe(200);
+          });
+  });
+  test('404: Fails to update when an article is not exist', () => {
+    return request(app)
+        .patch('/api/articles/123456')
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('article not found');
+        });
+});
 });
 
 describe("NOT RECOGNISED", () => {
