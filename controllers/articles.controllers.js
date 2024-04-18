@@ -44,6 +44,10 @@ function getArticle(req, res, next) {
     const { article_id } = req.params;
     const { username, body } = req.body;
 
+    if (!body) {
+        return res.status(400).send({ msg: 'body not find' });
+    }
+
     insertComment(article_id, username, body)
     .then((comment) => {
         res.status(201).send({ comment });
