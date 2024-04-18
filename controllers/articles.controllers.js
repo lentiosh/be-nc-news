@@ -1,4 +1,4 @@
-const { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists, insertComment, updateArticle } = require('../models/articles.models')
+const { fetchArticle, fetchAllArticles, fetchAllCommentsByArticle, checkArticleExists, insertComment, updateArticle, removeComment } = require('../models/articles.models')
 
 function getArticle(req, res, next) {
     const { article_id } = req.params;
@@ -54,7 +54,6 @@ function getArticle(req, res, next) {
   }
 
   function patchArticle(req, res, next) {
-
     const { article_id } = req.params;
     const { inc_votes } = req.body;
 
@@ -70,4 +69,19 @@ function getArticle(req, res, next) {
     });
   }
 
-module.exports = { getArticle, getAllArticles, getAllCommentsByArticle, postComment, patchArticle }
+  function deleteComment(req, res, next) {
+    const { comment_id } = req.params;
+    return removeComment(comment_id)
+    .then((comment) => {
+      res.status(204).send({comment})
+    })
+    .catch((err) => {
+      console.log(err)
+      if(err.code === '22P02') {
+        res.status(400).send({ msg : 'bad request'})
+      }
+      next(err);
+    });
+  }
+
+module.exports = { getArticle, getAllArticles, getAllCommentsByArticle, postComment, patchArticle, deleteComment }

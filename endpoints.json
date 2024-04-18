@@ -69,5 +69,12 @@
         }
       ]
   }
+},
+"DELETE /api/comments/:comment_id": {
+  "description": "delete a specific comment by comment_id and responds with 204",
+  "err": {
+      "404": "comment does not exist",
+      "400": "bad request"
+  }
 }
 }
