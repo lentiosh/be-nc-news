@@ -127,6 +127,24 @@ describe('/api/articles/1/comments', () => {
   })
 })
 
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: Responds  when posted a new comment', () => {
+      return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'user_lentio', body: 'add a new comment' })
+          .expect(201)
+          .then(({ body }) => {
+            const { comment } = body;
+            console.log(comment)
+              expect(comment).toMatchObject({
+                  author: 'user_lentio',
+                  body: 'add a new comment',
+                  article_id: 1
+              });
+          });
+  });
+});
+
 describe("NOT RECOGNISED", () => {
     test("GET 404: Responds with an appropriate status and error message when given an unrecognised endpoint", () => {
       return request(app)
