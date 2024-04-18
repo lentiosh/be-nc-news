@@ -57,4 +57,16 @@ function getArticle(req, res, next) {
       })
   }
 
-module.exports = { getArticle, getAllArticles, getAllCommentsByArticle, postComment }
+  function patchArticle(req, res, next) {
+    const { article_id } = req.params;
+    const { cost_at_auction } = req.body;
+    return updateTreasure( article_id, cost_at_auction)
+    .then((treasure) => {
+      res.status(200).send({ treasure });
+    })
+    .catch((err) => {
+      next(err);
+    });
+  }
+
+module.exports = { getArticle, getAllArticles, getAllCommentsByArticle, postComment, patchArticle }
