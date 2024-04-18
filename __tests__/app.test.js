@@ -176,6 +176,34 @@ describe('PATCH /api/articles/:article_id', () => {
 });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+
+  test("DELETE 204: Delete a comment from the comments", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+  });
+  test("DELETE 404: Responds with an appropriate status and error message when given a non-existent comment_id ", () => {
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({ body })=> {
+        const { msg } = body;
+        expect(msg).toBe('comment does not exist')
+      })
+  });
+  test("DELETE 400: Responds with an appropriate status and error message when given an invalid comment_id ", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({ body })=> {
+        const { msg } = body;
+        expect(msg).toBe('bad request')
+      })
+  });
+
+});
+
 describe("NOT RECOGNISED", () => {
     test("GET 404: Responds with an appropriate status and error message when given an unrecognised endpoint", () => {
       return request(app)
