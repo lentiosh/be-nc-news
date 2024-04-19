@@ -18,7 +18,9 @@ function getArticle(req, res, next) {
   }
 
   function getAllArticles(req, res, next) {
-    fetchAllArticles()
+    const { topic } = req.query;
+
+    fetchAllArticles(topic)
     .then(articles => {
         res.status(200).send({ articles : articles })
     })
