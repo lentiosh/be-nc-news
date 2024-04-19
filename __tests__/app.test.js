@@ -61,8 +61,6 @@ describe('/api/articles/:article_id', () => {
     });
   })
 
-  
-
   test('GET 404: article not found for non-existing article_id', () => {
     return request(app)
         .get('/api/articles/123456')
@@ -201,8 +199,29 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(msg).toBe('bad request')
       })
   });
-
 });
+
+describe('/api/users', () => {
+  test('GET 200: Responds with all users', () => {
+  return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({ body }) => {
+      const { users } = body;
+      expect(Array.isArray(users)).toBe(true);
+      expect(users).toHaveLength(4);
+      users.forEach(
+          ({ username,
+            name,
+            avatar_url }) => {
+            expect(typeof username).toBe("string");
+            expect(typeof name).toBe("string");
+            expect(typeof avatar_url).toBe("string");
+          }
+        );
+    })
+  })
+})
 
 describe("NOT RECOGNISED", () => {
     test("GET 404: Responds with an appropriate status and error message when given an unrecognised endpoint", () => {
