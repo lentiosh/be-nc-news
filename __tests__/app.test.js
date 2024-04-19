@@ -223,6 +223,32 @@ describe('/api/users', () => {
   })
 })
 
+describe('GET articles by topic', () => {
+
+  test("GET 200: Responds with all articles filtered by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test("GET 404: Responds with an error message for a topic that is not found in the articles", () => {
+    return request(app)
+      .get("/api/articles?topic=funny")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("article not found");
+      });
+  });
+
+})
+
 describe("NOT RECOGNISED", () => {
     test("GET 404: Responds with an appropriate status and error message when given an unrecognised endpoint", () => {
       return request(app)
@@ -233,6 +259,5 @@ describe("NOT RECOGNISED", () => {
           expect(msg).toBe("endpoint not found");
         });
     });
-    
   });
   

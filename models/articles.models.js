@@ -7,17 +7,26 @@ function fetchArticle(article_id) {
         });
 }
 
-function fetchAllArticles() {
-
+function fetchAllArticles(topic) {
+    
   let sqlQuery = `SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
                       FROM articles 
-                      LEFT JOIN comments ON articles.article_id = comments.article_id
-                      GROUP BY articles.article_id
-                      ORDER BY articles.created_at DESC;`;
+                      LEFT JOIN comments ON articles.article_id = comments.article_id`;
+                      
+    const topicQueryVal = [];
 
-  return db.query(sqlQuery).then(({rows}) => {
+     if (topic) {
+         sqlQuery += ` WHERE articles.topic = $1`;
+         topicQueryVal.push(topic);
+         
+         }
 
-    if (!rows.length) return Promise.reject({ status: 404, msg: "not found" });
+    sqlQuery += ` GROUP BY articles.article_id
+          ORDER BY articles.created_at DESC;`;
+
+  return db.query(sqlQuery, topicQueryVal).then(({rows}) => {
+
+    if (!rows.length) return Promise.reject({ status: 404, msg: "article not found" });
 
     return rows;
 
