@@ -1,4 +1,5 @@
 const express = require('express')
+const { getAllUsers } = require('./controllers/users.controllers')
 const { getTopics, getAllAPI } = require('./controllers/topics.controllers')
 const { getArticle, getAllArticles, getAllCommentsByArticle, postComment, patchArticle, deleteComment } = require('./controllers/articles.controllers')
 
@@ -22,6 +23,8 @@ app.post('/api/articles/:article_id/comments', postComment)
 app.patch('/api/articles/:article_id', patchArticle)
 
 app.delete("/api/comments/:comment_id", deleteComment)
+
+app.get('/api/users', getAllUsers)
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "endpoint not found" });
