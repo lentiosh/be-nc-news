@@ -7,30 +7,40 @@ function fetchArticle(article_id) {
         });
 }
 
-function fetchAllArticles(topic) {
-    
-  let sqlQuery = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
-                      FROM articles 
-                      LEFT JOIN comments ON articles.article_id = comments.article_id`;
-                      
-    const topicQueryVal = [];
+function fetchAllArticles(topic, sort_by = 'created_at', order = 'desc') {
+    let sqlQuery = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
+                    FROM articles 
+                    LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
-     if (topic) {
-         sqlQuery += ` WHERE articles.topic = $1`;
-         topicQueryVal.push(topic);
-         
-         }
+    const queryParams = [];
 
-    sqlQuery += ` GROUP BY articles.article_id
-          ORDER BY articles.created_at DESC;`;
+    if (topic) {
+        sqlQuery += ` WHERE articles.topic = $1`;
+        queryParams.push(topic);
+    }
 
-  return db.query(sqlQuery, topicQueryVal).then(({rows}) => {
+    switch (sort_by) {
+        case 'date':
+            sqlQuery += ' ORDER BY articles.created_at';
+            break;
+        case 'comment_count':
+            sqlQuery += ' ORDER BY comment_count';
+            break;
+        case 'votes':
+            sqlQuery += ' ORDER BY articles.votes';
+            break;
+        default:
+            sqlQuery += ' ORDER BY articles.created_at';
+    }
 
-    if (!rows.length) return Promise.reject({ status: 404, msg: "article not found" });
+    sqlQuery += ` ${order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}`;
 
-    return rows;
+    sqlQuery += ' GROUP BY articles.article_id';
 
-  })
+    return db.query(sqlQuery, queryParams).then(({ rows }) => {
+        if (!rows.length) return Promise.reject({ status: 404, msg: "No articles found" });
+        return rows;
+    });
 }
 
 function fetchAllCommentsByArticle(article_id) {

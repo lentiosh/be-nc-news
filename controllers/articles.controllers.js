@@ -17,17 +17,17 @@ function getArticle(req, res, next) {
       })
   }
 
-  function getAllArticles(req, res, next) {
-    const { topic } = req.query;
+function getAllArticles(req, res, next) {
+    const { topic, sort_by, order } = req.query;
 
-    fetchAllArticles(topic)
-    .then(articles => {
-        res.status(200).send({ articles : articles })
-    })
-    .catch((err) => { 
-        next(err);
-      })
-  }
+    fetchAllArticles(topic, sort_by, order)
+        .then(articles => {
+            res.status(200).send({ articles: articles });
+        })
+        .catch((err) => {
+            next(err);
+        });
+}
 
   function getAllCommentsByArticle(req, res, next){
     const { article_id } = req.params;
